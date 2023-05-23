@@ -7,9 +7,9 @@ import {
   HomeIcon,
   UserIcon,
 } from "react-native-heroicons/solid"
-import Discover from "../../screens/Discover"
-import Home from "../../screens/Home"
-import Account from "../../screens/Account"
+import Discover from "../../screens/Discover/Discover"
+import Home from "../../screens/Home/Home"
+import Account from "../../screens/Account/Account"
 
 const Tab = createBottomTabNavigator()
 

@@ -3,9 +3,9 @@ import React from "react"
 import { StatusBar } from "expo-status-bar"
 import { SafeAreaView } from "react-native-safe-area-context"
 import { UserIcon, MagnifyingGlassIcon } from "react-native-heroicons/solid"
-import Header from "../components/Home/Header"
-import Search from "../components/Home/Search"
-import { Pill } from "../components/Home/Pill"
+import Header from "../../components/Home/Header"
+import Search from "../../components/Home/Search"
+import { Pill } from "../../components/Home/Pill"
 
 const data = [
   {
