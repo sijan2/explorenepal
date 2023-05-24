@@ -21,7 +21,7 @@ const BottomTab = () => {
         tabBarShowLabel: false,
         tabBarStyle: {
           position: "absolute",
-          bottom: 25,
+          bottom: 30,
           shadowOffset: {
             width: 0,
             height: 1,

@@ -6,6 +6,10 @@ import { UserIcon, MagnifyingGlassIcon } from "react-native-heroicons/solid"
 import Header from "../../components/Home/Header"
 import Search from "../../components/Home/Search"
 import { Pill } from "../../components/Home/Pill"
+import { cards } from "../../data/card"
+import { Card } from "../../components/CardSwiper/Card"
+import Animated, { useSharedValue } from "react-native-reanimated"
+import { GestureHandlerRootView } from "react-native-gesture-handler"
 
 const data = [
   {
@@ -34,31 +38,64 @@ const data = [
   },
 ]
 
-const Home = () => {
-  return (
-    <SafeAreaView className="flex-1 bg-slate-300 ">
-      <View className="flex flex-col">
-        {/* Header */}
-        <Header />
-        {/* Search */}
-        <Search />
-        {/* Pill FIlter */}
-        <FlatList
-          showsHorizontalScrollIndicator={false}
-          horizontal
-          data={data}
-          renderItem={({ item }) => (
-            <Pill title={item.title} image={item.image} />
-          )}
-        />
-      </View>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        className="flex-1 bg-red-600"
-      ></ScrollView>
+const data2 = [
+  {
+    id: 1,
+    title: "Hiking ",
+  },
+  {
+    id: 2,
+    title: "Historical",
+  },
+]
 
-      <StatusBar style="dark" />
-    </SafeAreaView>
+const Home = () => {
+  const totalCards = cards.length
+  const shuffleBack = useSharedValue(false)
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaView className="flex-1 bg-slate-300">
+        <View className="flex flex-col">
+          {/* Header */}
+          <Header />
+          {/* Search */}
+          <Search />
+          {/* Pill FIlter */}
+          <FlatList
+            showsHorizontalScrollIndicator={false}
+            horizontal
+            data={data}
+            renderItem={({ item }) => (
+              <Pill title={item.title} image={item.image} />
+            )}
+          />
+        </View>
+
+        <View className="flex-1">
+          <View className="flex flex-row justify-between p-4 px-6 mx-4 ">
+            <Text className="text-lg font-bold text-black px-4 py-2">
+              Destinations
+            </Text>
+            <Text className="text-sm font-bold text-pink-500 px-4 py-2">
+              See All
+            </Text>
+          </View>
+          <View className="flex-1">
+            {cards.map((card, index) => (
+              <Card
+                card={card}
+                key={index}
+                index={index}
+                totalCards={totalCards}
+                shuffleBack={shuffleBack}
+              />
+            ))}
+          </View>
+        </View>
+
+        <StatusBar style="dark" />
+      </SafeAreaView>
+    </GestureHandlerRootView>
   )
 }
 
