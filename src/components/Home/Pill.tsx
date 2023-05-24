@@ -10,7 +10,7 @@ const widthPadding = Dimensions.get("window").width - 24
 
 export const Pill = ({ title, image }: PillProps) => {
   return (
-    <View style={{ height: 80 }} className="py-4 px-6 pr-0  mx-4 mr-2">
+    <View style={{ height: 80 }} className="p-4 pr-0  mx-4 mr-2">
       <View
         style={{ minWidth: widthPadding / 2.5, height: 48 }}
         className="flex flex-row p-2 rounded-full relative justify-start items-center bg-white"

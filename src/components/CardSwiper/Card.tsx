@@ -228,7 +228,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
     alignItems: "center",
-    top: -100,
+    top: -120,
   },
   card: {
     backgroundColor: "white",

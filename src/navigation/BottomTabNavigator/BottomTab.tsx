@@ -3,13 +3,15 @@ import React from "react"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 
 import {
-  ReceiptPercentIcon,
   HomeIcon,
+  MapIcon,
+  BookmarkIcon,
   UserIcon,
 } from "react-native-heroicons/solid"
 import Discover from "../../screens/Discover/Discover"
 import Home from "../../screens/Home/Home"
 import Account from "../../screens/Account/Account"
+import Bookmark from "../../screens/Bookmark/Bookmark"
 
 const Tab = createBottomTabNavigator()
 
@@ -21,7 +23,8 @@ const BottomTab = () => {
         tabBarShowLabel: false,
         tabBarStyle: {
           position: "absolute",
-          bottom: 30,
+          bottom: 25,
+          height: 65,
           shadowOffset: {
             width: 0,
             height: 1,
@@ -35,35 +38,10 @@ const BottomTab = () => {
           paddingHorizontal: 20,
           borderRadius: 90,
 
-          backgroundColor: "#fff",
+          backgroundColor: "#000",
         },
       }}
     >
-      <Tab.Screen
-        name="Offer"
-        component={Discover}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ focused }: { focused: boolean }) => (
-            <View
-              style={{
-                backgroundColor: focused ? "#ffc9c9" : "#fff",
-              }}
-              className="flex-row rounded-full px-2 py-1 space-x-1"
-            >
-              <ReceiptPercentIcon size={20} color={focused ? "red" : "gray"} />
-              <Text
-                style={{
-                  color: focused ? "red" : "gray",
-                  fontWeight: focused ? "bold" : "normal",
-                }}
-              >
-                Offers
-              </Text>
-            </View>
-          ),
-        }}
-      />
       <Tab.Screen
         name="Home"
         component={Home}
@@ -72,44 +50,62 @@ const BottomTab = () => {
           tabBarIcon: ({ focused }: { focused: boolean }) => (
             <View
               style={{
-                backgroundColor: focused ? "#fad1d0" : "#fff",
+                backgroundColor: focused ? "#fbde8e" : "transparent",
               }}
-              className="flex-row rounded-full px-2 py-1 space-x-1"
+              className="rounded-full p-2 "
             >
-              <HomeIcon size={20} color={focused ? "red" : "gray"} />
-              <Text
-                style={{
-                  color: focused ? "red" : "gray",
-                  fontWeight: focused ? "bold" : "normal",
-                }}
-              >
-                Home
-              </Text>
+              <HomeIcon size={28} color={focused ? "black" : "#f2f2f2"} />
             </View>
           ),
         }}
       />
       <Tab.Screen
-        name="History"
+        name="Discover"
+        component={Discover}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ focused }: { focused: boolean }) => (
+            <View
+              style={{
+                backgroundColor: focused ? "#fbde8e" : "transparent",
+              }}
+              className="rounded-full p-2 "
+            >
+              <MapIcon size={28} color={focused ? "black" : "#f2f2f2"} />
+            </View>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Bookmark"
+        component={Bookmark}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ focused }: { focused: boolean }) => (
+            <View
+              style={{
+                backgroundColor: focused ? "#fbde8e" : "transparent",
+              }}
+              className=" rounded-full p-2 "
+            >
+              <BookmarkIcon size={28} color={focused ? "black" : "#f2f2f2"} />
+            </View>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Account"
         component={Account}
         options={{
           headerShown: false,
           tabBarIcon: ({ focused }: { focused: boolean }) => (
             <View
               style={{
-                backgroundColor: focused ? "#fad1d0" : "#fff",
+                backgroundColor: focused ? "#fbde8e" : "transparent",
               }}
-              className="flex-row rounded-full ml-1 px-2 py-1 space-x-1"
+              className="rounded-full p-2 "
             >
-              <UserIcon size={20} color={focused ? "red" : "gray"} />
-              <Text
-                style={{
-                  color: focused ? "red" : "gray",
-                  fontWeight: focused ? "bold" : "normal",
-                }}
-              >
-                History
-              </Text>
+              <UserIcon size={28} color={focused ? "black" : "#f2f2f2"} />
             </View>
           ),
         }}

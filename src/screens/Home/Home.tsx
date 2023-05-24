@@ -72,7 +72,7 @@ const Home = () => {
         </View>
 
         <View className="flex-1">
-          <View className="flex flex-row justify-between p-4 px-6 mx-4 ">
+          <View className="flex flex-row justify-between p-4 mx-4 ">
             <Text className="text-lg font-bold text-black px-4 py-2">
               Destinations
             </Text>
