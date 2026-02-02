@@ -1,4 +1,4 @@
-import { View, Text } from "react-native"
+import { View, StyleSheet } from "react-native"
 import React from "react"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 
@@ -37,7 +37,6 @@ const BottomTab = () => {
           shadowColor: "#36454F",
           paddingHorizontal: 20,
           borderRadius: 90,
-
           backgroundColor: "#000",
         },
       }}
@@ -49,10 +48,10 @@ const BottomTab = () => {
           headerShown: false,
           tabBarIcon: ({ focused }: { focused: boolean }) => (
             <View
-              style={{
-                backgroundColor: focused ? "#fbde8e" : "transparent",
-              }}
-              className="rounded-full p-2 "
+              style={[
+                styles.iconContainer,
+                { backgroundColor: focused ? "#fbde8e" : "transparent" }
+              ]}
             >
               <HomeIcon size={28} color={focused ? "black" : "#f2f2f2"} />
             </View>
@@ -66,10 +65,10 @@ const BottomTab = () => {
           headerShown: false,
           tabBarIcon: ({ focused }: { focused: boolean }) => (
             <View
-              style={{
-                backgroundColor: focused ? "#fbde8e" : "transparent",
-              }}
-              className="rounded-full p-2 "
+              style={[
+                styles.iconContainer,
+                { backgroundColor: focused ? "#fbde8e" : "transparent" }
+              ]}
             >
               <MapIcon size={28} color={focused ? "black" : "#f2f2f2"} />
             </View>
@@ -83,10 +82,10 @@ const BottomTab = () => {
           headerShown: false,
           tabBarIcon: ({ focused }: { focused: boolean }) => (
             <View
-              style={{
-                backgroundColor: focused ? "#fbde8e" : "transparent",
-              }}
-              className=" rounded-full p-2 "
+              style={[
+                styles.iconContainer,
+                { backgroundColor: focused ? "#fbde8e" : "transparent" }
+              ]}
             >
               <BookmarkIcon size={28} color={focused ? "black" : "#f2f2f2"} />
             </View>
@@ -100,10 +99,10 @@ const BottomTab = () => {
           headerShown: false,
           tabBarIcon: ({ focused }: { focused: boolean }) => (
             <View
-              style={{
-                backgroundColor: focused ? "#fbde8e" : "transparent",
-              }}
-              className="rounded-full p-2 "
+              style={[
+                styles.iconContainer,
+                { backgroundColor: focused ? "#fbde8e" : "transparent" }
+              ]}
             >
               <UserIcon size={28} color={focused ? "black" : "#f2f2f2"} />
             </View>
@@ -113,5 +112,12 @@ const BottomTab = () => {
     </Tab.Navigator>
   )
 }
+
+const styles = StyleSheet.create({
+  iconContainer: {
+    borderRadius: 9999,
+    padding: 8,
+  },
+})
 
 export default BottomTab

@@ -1,14 +1,9 @@
-import React, { useEffect } from "react"
+import React from "react"
 import { View, StyleSheet, Dimensions, Image } from "react-native"
-import {
-  GestureHandlerRootView,
-  PanGestureHandler,
-  PanGestureHandlerGestureEvent,
-} from "react-native-gesture-handler"
-import { snapPoint } from "./Math"
+import { GestureDetector, Gesture } from "react-native-gesture-handler"
 import Animated, {
   Easing,
-  useAnimatedGestureHandler,
+  SharedValue,
   useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
@@ -17,18 +12,28 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated"
 
-const { width: width, height } = Dimensions.get("screen")
+const { width: width } = Dimensions.get("screen")
 
-const aspectRatio = 722 / 368
 const CARD_WIDTH = width / 2
 const CARD_HEIGHT = 330
 const IMAGE_WIDTH = CARD_WIDTH
-const DURATION = 250
 const side = (width + CARD_WIDTH + 100) / 2
 const SNAP_POINTS = [-side, 0, side]
 const ROTATION_ANGLE = 20
 const TRANSFORM_X = 70
 const TRANSFORM_Y = -15
+
+const snapPoint = (
+  value: number,
+  velocity: number,
+  points: readonly number[]
+): number => {
+  "worklet"
+  const point = value + 0.2 * velocity
+  const deltas = points.map((p) => Math.abs(point - p))
+  const minDelta = Math.min.apply(null, deltas)
+  return points.filter((p) => Math.abs(point - p) === minDelta)[0]
+}
 
 interface CardProps {
   card: {
@@ -38,8 +43,7 @@ interface CardProps {
   }
   index: number
   totalCards: number
-
-  shuffleBack: Animated.SharedValue<boolean>
+  shuffleBack: SharedValue<boolean>
 }
 
 export const Card = ({
@@ -52,10 +56,10 @@ export const Card = ({
     index === totalCards - 1
       ? 0
       : index === totalCards - 2
-      ? ROTATION_ANGLE
-      : index === totalCards - 3
-      ? -ROTATION_ANGLE
-      : Math.random() * 20 - 10
+        ? ROTATION_ANGLE
+        : index === totalCards - 3
+          ? -ROTATION_ANGLE
+          : Math.random() * 20 - 10
   )
   const rotateZ = useSharedValue(theta.value)
   const scale = useSharedValue(1)
@@ -64,31 +68,31 @@ export const Card = ({
     index === totalCards - 1
       ? 0
       : index === totalCards - 2
-      ? TRANSFORM_X
-      : index === totalCards - 3
-      ? -TRANSFORM_X
-      : 0
+        ? TRANSFORM_X
+        : index === totalCards - 3
+          ? -TRANSFORM_X
+          : 0
   )
 
   const initialY = useSharedValue(
     index === totalCards - 1
       ? TRANSFORM_Y
       : index === totalCards - 2
-      ? TRANSFORM_Y
-      : index === totalCards - 3
-      ? TRANSFORM_Y
-      : 0
+        ? TRANSFORM_Y
+        : index === totalCards - 3
+          ? TRANSFORM_Y
+          : 0
   )
 
   const x = useSharedValue(initialX.value)
   const y = useSharedValue(initialY.value)
+  const contextX = useSharedValue(0)
+  const contextY = useSharedValue(0)
 
   useAnimatedReaction(
-    () => {
-      shuffleBack.value
-    },
-    () => {
-      if (shuffleBack.value) {
+    () => shuffleBack.value,
+    (shouldShuffle) => {
+      if (shouldShuffle) {
         const delay = index * 150
         x.value = withDelay(delay, withSpring(initialX.value, {}))
         y.value = withDelay(delay, withSpring(initialY.value, {}))
@@ -102,37 +106,34 @@ export const Card = ({
     }
   )
 
-  const onGestureEvent = useAnimatedGestureHandler<
-    PanGestureHandlerGestureEvent,
-    { x: number; y: number }
-  >({
-    onStart: (_, ctx) => {
-      ctx.x = x.value
-      ctx.y = y.value
-    },
-
-    onActive: ({ translationX, translationY }, ctx) => {
-      x.value = ctx.x + translationX
-      y.value = ctx.y + translationY
+  const panGesture = Gesture.Pan()
+    .onStart(() => {
+      "worklet"
+      contextX.value = x.value
+      contextY.value = y.value
+    })
+    .onUpdate((event) => {
+      "worklet"
+      x.value = contextX.value + event.translationX
+      y.value = contextY.value + event.translationY
       scale.value = withTiming(1.1, {
         easing: Easing.inOut(Easing.ease),
       })
       rotateZ.value = withTiming(0, {
         easing: Easing.inOut(Easing.ease),
       })
-    },
-
-    onEnd: ({ velocityX, velocityY }) => {
-      const dest = snapPoint(x.value, velocityX, SNAP_POINTS)
-      x.value = withSpring(dest, { velocity: velocityX })
-      y.value = withSpring(0, { velocity: velocityY })
+    })
+    .onEnd((event) => {
+      "worklet"
+      const dest = snapPoint(x.value, event.velocityX, SNAP_POINTS)
+      x.value = withSpring(dest, { velocity: event.velocityX })
+      y.value = withSpring(0, { velocity: event.velocityY })
       scale.value = withTiming(1, { easing: Easing.inOut(Easing.ease) }, () => {
         if (index === 0 && dest !== 0) {
           shuffleBack.value = true
         }
       })
-    },
-  })
+    })
 
   const style = useAnimatedStyle(() => ({
     transform: [
@@ -145,7 +146,7 @@ export const Card = ({
 
   return (
     <View style={styles.container} pointerEvents="box-none">
-      <PanGestureHandler onGestureEvent={onGestureEvent}>
+      <GestureDetector gesture={panGesture}>
         <Animated.View style={[styles.card, style]}>
           <Image
             source={source}
@@ -156,69 +157,24 @@ export const Card = ({
             }}
             resizeMode="cover"
           />
-          <View
-            style={{
-              position: "absolute",
-              justifyContent: "space-between",
-              paddingHorizontal: 10,
-              paddingVertical: 5,
-              bottom: 10,
-              flexDirection: "row",
-              width: CARD_WIDTH,
-              minHeight: 30,
-            }}
-          >
-            <View
-              style={{
-                backgroundColor: "black",
-                borderRadius: 15,
-                paddingHorizontal: 10,
-                paddingVertical: 5,
-                shadowColor: "#fff",
-                shadowOffset: {
-                  width: 0,
-                  height: 2,
-                },
-                shadowOpacity: 0.25,
-                shadowRadius: 3.84,
-                elevation: 10,
-              }}
-            >
+          <View style={styles.overlay}>
+            <View style={styles.titleBadge}>
               <Animated.Text
                 numberOfLines={1}
                 ellipsizeMode={"tail"}
-                style={{
-                  maxWidth: 90,
-                  fontWeight: "bold",
-                  color: "white",
-                }}
+                style={styles.titleText}
               >
                 {title}
               </Animated.Text>
             </View>
-            <View
-              style={{
-                backgroundColor: "orange",
-                borderRadius: 15,
-                paddingHorizontal: 10,
-                paddingVertical: 5,
-                shadowColor: "#fff",
-                shadowOffset: {
-                  width: 0,
-                  height: 2,
-                },
-                shadowOpacity: 0.25,
-                shadowRadius: 3.84,
-                elevation: 10,
-              }}
-            >
-              <Animated.Text style={{ fontWeight: "bold", color: "white" }}>
+            <View style={styles.tripBadge}>
+              <Animated.Text style={styles.tripText}>
                 {trip} Trips
               </Animated.Text>
             </View>
           </View>
         </Animated.View>
-      </PanGestureHandler>
+      </GestureDetector>
     </View>
   )
 }
@@ -245,5 +201,52 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 15,
+  },
+  overlay: {
+    position: "absolute",
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    bottom: 10,
+    flexDirection: "row",
+    width: CARD_WIDTH,
+    minHeight: 30,
+  },
+  titleBadge: {
+    backgroundColor: "black",
+    borderRadius: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    shadowColor: "#fff",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 10,
+  },
+  titleText: {
+    maxWidth: 90,
+    fontWeight: "bold",
+    color: "white",
+  },
+  tripBadge: {
+    backgroundColor: "orange",
+    borderRadius: 15,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    shadowColor: "#fff",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 10,
+  },
+  tripText: {
+    fontWeight: "bold",
+    color: "white",
   },
 })

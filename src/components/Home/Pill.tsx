@@ -1,4 +1,4 @@
-import { View, Text, Image, Dimensions } from "react-native"
+import { View, Text, Image, Dimensions, StyleSheet } from "react-native"
 import React from "react"
 
 interface PillProps {
@@ -10,25 +10,52 @@ const widthPadding = Dimensions.get("window").width - 24
 
 export const Pill = ({ title, image }: PillProps) => {
   return (
-    <View style={{ height: 80 }} className="p-4 pr-0  mx-4 mr-2">
-      <View
-        style={{ minWidth: widthPadding / 2.5, height: 48 }}
-        className="flex flex-row p-2 rounded-full relative justify-start items-center bg-white"
-      >
-        <View className="absolute">
+    <View style={styles.container}>
+      <View style={[styles.pill, { minWidth: widthPadding / 2.5 }]}>
+        <View style={styles.imageContainer}>
           <Image
-            style={{
-              width: 48,
-              height: 48,
-              borderRadius: 24,
-            }}
+            style={styles.image}
             source={{ uri: image }}
           />
         </View>
-        <Text style={{}} className="ml-12 text-sm text font-bold text-gray-500">
+        <Text style={styles.title}>
           {title}
         </Text>
       </View>
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    height: 80,
+    padding: 16,
+    paddingRight: 0,
+    marginHorizontal: 16,
+    marginRight: 8,
+  },
+  pill: {
+    height: 48,
+    flexDirection: 'row',
+    padding: 8,
+    borderRadius: 9999,
+    position: 'relative',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  imageContainer: {
+    position: 'absolute',
+  },
+  image: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+  },
+  title: {
+    marginLeft: 48,
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#6b7280',
+  },
+})

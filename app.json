@@ -2,6 +2,7 @@
   "expo": {
     "name": "explorenepal",
     "slug": "explorenepal",
+    "scheme": "explorenepal",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,7 +16,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.explorenepal"
     },
     "android": {
       "adaptiveIcon": {
